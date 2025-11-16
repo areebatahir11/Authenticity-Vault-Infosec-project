@@ -106,13 +106,6 @@
 
 ---
 
-## **💡 Contribution**
-
-* Contributions, issues, and feature requests are **welcome**
-* Feel free to **fork**, make changes, and submit pull requests
-
----
-
 ## **🔗 Author**
 
 **Areeba Tahir**
