@@ -2,7 +2,7 @@
 
 import { getContract } from '../lib/contract'
 import { useState } from 'react'
-import { keccak256, arrayify } from 'ethers'
+import { keccak256 } from 'ethers'
 import Navbar from './Navbar'
 import {
   Upload as UploadIcon,
@@ -46,8 +46,8 @@ export default function Upload() {
       setStatus({ type: 'error', message: 'Please select a file to upload!' })
       return
     }
+    const { contract, signer } = await getContract()
 
-    const contract = await getContract()
     if (!contract) {
       setStatus({
         type: 'error',
@@ -62,26 +62,44 @@ export default function Upload() {
     try {
       const arrayBuffer = await file.arrayBuffer()
       const bytes = new Uint8Array(arrayBuffer)
-      const fileHash = keccak256(arrayify(bytes))
+      const userAddress = await signer.getAddress()
 
+      const fileHash = keccak256(bytes)
+
+      // 1) Listen BEFORE transaction
+      contract.once('FileUploaded', (hash, uploader, role, timestamp) => {
+        console.log('Event received:', hash, uploader, role, timestamp)
+        setStatus({
+          type: 'success',
+          message: `File uploaded successfully! Hash: ${hash}`,
+        })
+      })
+
+      // 2) Now send transaction
       const tx = await contract.uploadFile(
         fileHash,
-        await contract.signer.getAddress(),
+        userAddress,
         parseInt(role)
       )
 
+      // 3) Wait for mining
       await tx.wait()
 
-      setStatus({
-        type: 'success',
-        message: 'File uploaded successfully to blockchain!',
-      })
       setFile(null)
-    } catch (err) {
-      console.error(err)
+    } catch (e) {
+      console.error('Full error object:', e)
+
+      let reason =
+        e.reason ||
+        e.data?.message ||
+        e.error?.message ||
+        e.error?.reason ||
+        e.info?.error?.message ||
+        'Unknown error — check contract or ABI'
+
       setStatus({
         type: 'error',
-        message: 'Upload failed! Check console for details.',
+        message: `Error: ${reason}`,
       })
     } finally {
       setLoading(false)

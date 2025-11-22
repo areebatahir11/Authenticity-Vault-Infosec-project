@@ -26,16 +26,7 @@ export default function IssueCertificate() {
     }
 
     if (!student) {
-      setStatus({
-        type: 'error',
-        message: 'Please enter student wallet address!',
-      })
-      return
-    }
-
-    const contract = await getContract()
-    if (!contract) {
-      setStatus({ type: 'error', message: 'Failed to connect to contract' })
+      setStatus({ type: 'error', message: 'Please enter student address!' })
       return
     }
 
@@ -43,29 +34,59 @@ export default function IssueCertificate() {
     setStatus({ type: '', message: '' })
 
     try {
-      const arrayBuffer = await file.arrayBuffer()
-      const bytes = new Uint8Array(arrayBuffer)
-      const fileHash = keccak256(arrayify(bytes))
+      const { contract, signer } = await getContract()
+      const issuer = await signer.getAddress()
 
-      const tx = await contract.issueCertificate(
-        await contract.signer.getAddress(),
-        student,
-        fileHash
-      )
+      // hash the file
+      const buffer = await file.arrayBuffer()
+      const bytes = new Uint8Array(buffer)
+      const fileHash = keccak256(bytes)
 
-      await tx.wait()
+      // send tx
+      const tx = await contract.issueCertificate(issuer, student, fileHash)
+      const receipt = await tx.wait()
 
-      setStatus({
-        type: 'success',
-        message: 'Certificate issued successfully!',
-      })
+      // extract event from receipt
+      const event = receipt.logs
+        .map((log) => {
+          try {
+            return contract.interface.parseLog(log)
+          } catch {
+            return null
+          }
+        })
+        .filter(Boolean)
+        .find((e) => e.name === 'CertificateIssued')
+
+      if (event) {
+        const { fileHash: hash, issuer, student, timestamp } = event.args
+
+        setStatus({
+          type: 'success',
+          message: `Certificate issued successfully! Hash: ${hash}`,
+        })
+      } else {
+        setStatus({
+          type: 'success',
+          message: 'Certificate issued successfully (no event found).',
+        })
+      }
+
       setStudent('')
       setFile(null)
-    } catch (err) {
-      console.error(err)
+    } catch (e) {
+      console.error('Full error object:', e)
+
+      let reason =
+        e.reason ||
+        e.data?.message ||
+        e.error?.message ||
+        e.error?.reason ||
+        'Unknown error'
+
       setStatus({
         type: 'error',
-        message: 'Failed to issue certificate. Check console.',
+        message: `Error: ${reason}`,
       })
     } finally {
       setLoading(false)

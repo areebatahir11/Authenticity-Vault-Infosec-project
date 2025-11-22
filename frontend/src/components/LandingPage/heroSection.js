@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { ChevronRight, Lock } from 'lucide-react'
+import Link from 'next/link'
 
 export default function HeroSection() {
   return (
@@ -30,13 +31,17 @@ export default function HeroSection() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold flex items-center justify-center transition shadow-lg shadow-indigo-600/50">
-            Get Started
-            <ChevronRight className="w-5 h-5 ml-2" />
-          </button>
-          <button className="px-8 py-4 bg-slate-800/50 hover:bg-slate-700/50 text-white rounded-lg font-semibold backdrop-blur-sm border border-slate-700 transition">
-            View Documentation
-          </button>
+          <Link href="/dashboard">
+            <button className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold flex items-center justify-center transition shadow-lg shadow-indigo-600/50">
+              Get Started
+            </button>
+          </Link>
+
+          <Link href="/docs">
+            <button className="px-8 py-4 bg-slate-800/50 hover:bg-slate-700/50 text-white rounded-lg font-semibold backdrop-blur-sm border border-slate-700 transition">
+              View Documentation
+            </button>
+          </Link>
         </div>
 
         <div className="mt-20 relative">

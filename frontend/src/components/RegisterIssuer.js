@@ -59,8 +59,8 @@ export default function RegisterIssuer() {
     setStatus({ type: '', message: '' })
 
     try {
-      const c = await getContract()
-      const tx = await c.registerAsTrustedIssuerOrLegalIdentity(
+      const { contract } = await getContract()
+      const tx = await contract.registerAsTrustedIssuerOrLegalIdentity(
         parseInt(role),
         issuer,
         org,
@@ -74,10 +74,19 @@ export default function RegisterIssuer() {
       setUrl('')
       setRole('1')
     } catch (e) {
-      console.error(e)
+      console.error('Full error object:', e)
+
+      let reason =
+        e.reason ||
+        e.data?.message ||
+        e.error?.message ||
+        e.error?.reason ||
+        e.info?.error?.message ||
+        'Unknown error — check contract or ABI'
+
       setStatus({
         type: 'error',
-        message: 'Error registering entity. See console.',
+        message: `Error: ${reason}`,
       })
     } finally {
       setLoading(false)

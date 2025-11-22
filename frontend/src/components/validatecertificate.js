@@ -2,7 +2,7 @@
 
 import Navbar from './Navbar'
 import { getContract } from '../lib/contract'
-import { keccak256, arrayify } from 'ethers'
+import { keccak256 } from 'ethers'
 import { useState } from 'react'
 import {
   Shield,
@@ -24,7 +24,7 @@ export default function ValidateCertificate() {
       return
     }
 
-    const contract = await getContract()
+    const { contract } = await getContract()
     if (!contract) {
       setResult({
         valid: false,
@@ -39,23 +39,29 @@ export default function ValidateCertificate() {
     try {
       const arrayBuffer = await file.arrayBuffer()
       const bytes = new Uint8Array(arrayBuffer)
-      const fileHash = keccak256(arrayify(bytes))
+      const fileHash = keccak256(bytes)
 
-      const isValid = await contract.uploadCertificateForValidation(fileHash)
+      const isValid = await contract.validateCertificate(fileHash)
 
       setResult({
         valid: isValid,
         message: isValid
-          ? 'Certificate is authentic and verified on the blockchain'
-          : 'Certificate not found or invalid',
+          ? 'Certificate is authentic and verified on the blockchain.'
+          : 'Certificate not found or invalid.',
         hash: fileHash,
       })
-    } catch (err) {
-      console.error(err)
+    } catch (e) {
+      console.error('Full error:', e)
+
+      const reason =
+        e.reason ||
+        e.data?.message ||
+        e.error?.message ||
+        'Unknown error — check contract / ABI'
+
       setResult({
         valid: false,
-        message: 'Error validating certificate. Please try again.',
-        error: err.message,
+        message: reason,
       })
     } finally {
       setLoading(false)
@@ -63,8 +69,7 @@ export default function ValidateCertificate() {
   }
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0]
-    setFile(selectedFile)
+    setFile(e.target.files[0] || null)
     setResult(null)
   }
 

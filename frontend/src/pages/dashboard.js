@@ -1,9 +1,9 @@
-import Upload from '../components/Upload'
+import Dashboard from '../components/DashboardCard'
 
 export default function UploadPage() {
   return (
     <>
-      <Upload />
+      <Dashboard />
     </>
   )
 }

@@ -1,113 +1,86 @@
+'use client'
 import { useState } from 'react'
+import Link from 'next/link'
+import WalletConnect from '../ConnectWallet'
+import { Menu, X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
-import {
-  Shield,
-  FileCheck,
-  Scale,
-  Newspaper,
-  ChevronRight,
-  Upload,
-  CheckCircle,
-  Users,
-  Lock,
-  Globe,
-  Zap,
-} from 'lucide-react'
-
-// Navbar Component
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   return (
     <nav className="fixed w-full top-0 z-50 bg-slate-900/80 backdrop-blur-lg border-b border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-2">
-            <Shield className="w-8 h-8 text-indigo-400" />
-            <span className="text-xl font-bold text-white">
-              Authenticity Vault
-            </span>
+          {/* Logo */}
+          <div
+            onClick={() => router.push('/')}
+            className="text-xl font-bold text-white cursor-pointer"
+          >
+            Authenticity Vault
           </div>
 
-          <div className="hidden md:flex items-center space-x-8">
-            <a
-              href="#features"
-              className="text-slate-300 hover:text-white transition"
-            >
-              Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="text-slate-300 hover:text-white transition"
-            >
-              How It Works
-            </a>
-            <a
-              href="#roles"
-              className="text-slate-300 hover:text-white transition"
-            >
-              Roles
-            </a>
-            <a
-              href="#upload"
-              className="text-slate-300 hover:text-white transition"
-            >
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-8 text-slate-300">
+            <Link href="/" className="hover:text-white transition">
+              Home
+            </Link>
+            <Link href="/app" className="hover:text-white transition">
+              Dashboard
+            </Link>
+            <Link href="/app/verify" className="hover:text-white transition">
+              Verify
+            </Link>
+            <Link href="/app/upload" className="hover:text-white transition">
               Upload
-            </a>
-            <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">
-              Launch App
-            </button>
+            </Link>
+
+            <WalletConnect />
           </div>
 
+          {/* Mobile Button */}
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => setOpen(!open)}
             className="md:hidden text-white"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            {open ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
 
-        {isOpen && (
-          <div className="md:hidden pb-4 space-y-2">
-            <a
-              href="#features"
-              className="block text-slate-300 hover:text-white py-2"
+        {/* Mobile dropdown */}
+        {open && (
+          <div className="md:hidden pb-4 space-y-2 text-slate-300">
+            <Link
+              onClick={() => setOpen(false)}
+              href="/"
+              className="block hover:text-white py-2"
             >
-              Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="block text-slate-300 hover:text-white py-2"
+              Home
+            </Link>
+            <Link
+              onClick={() => setOpen(false)}
+              href="/app"
+              className="block hover:text-white py-2"
             >
-              How It Works
-            </a>
-            <a
-              href="#roles"
-              className="block text-slate-300 hover:text-white py-2"
+              Dashboard
+            </Link>
+            <Link
+              onClick={() => setOpen(false)}
+              href="/app/verify"
+              className="block hover:text-white py-2"
             >
-              Roles
-            </a>
-            <a
-              href="#upload"
-              className="block text-slate-300 hover:text-white py-2"
+              Verify
+            </Link>
+            <Link
+              onClick={() => setOpen(false)}
+              href="/app/upload"
+              className="block hover:text-white py-2"
             >
               Upload
-            </a>
-            <button className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">
-              Launch App
-            </button>
+            </Link>
+
+            <WalletConnect />
           </div>
         )}
       </div>

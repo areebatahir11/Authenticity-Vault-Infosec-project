@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import abi from '../abi/AuthenticityVault.json'
-export const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+export const CONTRACT_ADDRESS = '0x8464135c8F25Da09e49BC8782676a84730C318bC'
 
 export const getContract = async () => {
   if (typeof window == 'undefined') return null
@@ -9,5 +9,7 @@ export const getContract = async () => {
   const provider = new ethers.BrowserProvider(window.ethereum)
   const signer = await provider.getSigner()
 
-  return new ethers.Contract(CONTRACT_ADDRESS, abi.abi, signer)
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, abi.abi, signer)
+
+  return { contract, signer }
 }

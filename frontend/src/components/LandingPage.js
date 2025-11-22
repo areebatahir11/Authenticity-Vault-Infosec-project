@@ -1,4 +1,4 @@
-import Navbar from './LandingPage/navbar'
+import Navbar from '../components/Navbar'
 import HeroSection from './LandingPage/heroSection'
 import FeaturesSection from './LandingPage/FeatureSection'
 import TimelineSection from './LandingPage/TimelineSection'

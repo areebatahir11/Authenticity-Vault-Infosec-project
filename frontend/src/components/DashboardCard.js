@@ -46,8 +46,15 @@ export default function Dashboard() {
     {
       icon: <Scale className="w-8 h-8" />,
       title: 'Authority Panel',
-      description: 'Manage legal document verification and authority actions',
-      href: '/authority',
+      description: 'Manage registered authorities',
+      href: '/authoritiesregister',
+      color: 'from-pink-600 to-pink-800',
+    },
+    {
+      icon: <Scale className="w-8 h-8" />,
+      title: 'Hash Details',
+      description: 'Get hash timestamp, who registered it and its category',
+      href: '/gethashdetails',
       color: 'from-pink-600 to-pink-800',
     },
   ]
