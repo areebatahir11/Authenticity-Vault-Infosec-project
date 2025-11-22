@@ -79,7 +79,6 @@ contract AuthenticityVault {
         uint256 timestamp
     );
 
-    // NEW EVENT (you requested this 🔥)
     event CertificateValidated(
         bytes32 fileHash,
         bool isValid,
